@@ -1,0 +1,71 @@
+extensions = [".php", ".phtml"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:abstract\\s+)?(?:final\\s+)?class\\s+{T}\\b"
+
+[[patterns]]
+role = "interface"
+priority = 100
+regex = "interface\\s+{T}\\b"
+
+[[patterns]]
+role = "trait"
+priority = 100
+regex = "trait\\s+{T}\\b"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:public|private|protected|static|abstract|final|async)?\\s*(?:function|fn)\\s+{T}\\s*\\("
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "\\${T}\\b"
+
+[[patterns]]
+role = "static-call"
+priority = 80
+regex = "{T}::"
+
+[[patterns]]
+role = "instantiation"
+priority = 70
+regex = "new\\s+{T}[\\s(;]"
+
+[[patterns]]
+role = "type-hint"
+priority = 60
+regex = "(?:function|fn)\\s+\\w+\\s*\\([^)]*\\b{T}\\b"
+
+[[patterns]]
+role = "extends"
+priority = 50
+regex = "extends\\s+{T}\\b"
+
+[[patterns]]
+role = "implements"
+priority = 50
+regex = "implements\\s+{T}\\b"
+
+[[patterns]]
+role = "use-trait"
+priority = 50
+regex = "use\\s+{T}\\b"
+
+[[patterns]]
+role = "docblock"
+priority = 40
+regex = "@(?:param|return|var|type|see|throws)\\s+{T}\\b"
+
+[[patterns]]
+role = "namespace"
+priority = 30
+regex = "use\\s+(?:function|const)?\\s*{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

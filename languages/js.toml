@@ -1,0 +1,61 @@
+extensions = [".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:export\\s+)?(?:default\\s+)?class\\s+{T}\\b"
+
+[[patterns]]
+role = "interface"
+priority = 100
+regex = "(?:export\\s+)?interface\\s+{T}\\b"
+
+[[patterns]]
+role = "type"
+priority = 100
+regex = "(?:export\\s+)?type\\s+{T}\\b"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:export\\s+)?(?:async\\s+)?function\\s+{T}\\s*\\("
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:export\\s+)?(?:const|let|var)\\s+{T}\\s*[=:(]"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "import\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "instantiation"
+priority = 70
+regex = "new\\s+{T}[\\s(;]"
+
+[[patterns]]
+role = "type-ref"
+priority = 60
+regex = "(?:typeof|instanceof)\\s+{T}\\b"
+
+[[patterns]]
+role = "extends"
+priority = 50
+regex = "extends\\s+{T}\\b"
+
+[[patterns]]
+role = "implements"
+priority = 50
+regex = "implements\\s+{T}\\b"
+
+[[patterns]]
+role = "jsdoc"
+priority = 40
+regex = "@(?:type|param|returns?|typedef)\\s+\\{{{T}\\}}"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

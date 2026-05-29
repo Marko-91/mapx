@@ -1,0 +1,46 @@
+extensions = [".py"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:async\\s+)?def\\s+{T}\\s*\\("
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "class\\s+{T}\\b"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "{T}\\s*=\\s*(?:\\w|\\(|\\[|\\{)"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "(?:from|import)\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "decorator"
+priority = 80
+regex = "@{T}\\b"
+
+[[patterns]]
+role = "type-hint"
+priority = 60
+regex = "(?:def\\s+\\w+\\s*\\([^)]*|->)\\s*\\b{T}\\b"
+
+[[patterns]]
+role = "extends"
+priority = 50
+regex = "class\\s+\\w+.*\\(.*\\b{T}\\b"
+
+[[patterns]]
+role = "docstring-ref"
+priority = 40
+regex = ":(?:type|param|rtype|returns?)\\s+{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

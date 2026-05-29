@@ -1,0 +1,61 @@
+extensions = [".rs"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:pub\\s+)?(?:async\\s+)?(?:unsafe\\s+)?fn\\s+{T}\\s*<"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:pub\\s+)?(?:async\\s+)?(?:unsafe\\s+)?fn\\s+{T}\\s*\\("
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:pub\\s+)?(?:struct|enum|trait|union)\\s+{T}\\b"
+
+[[patterns]]
+role = "type"
+priority = 100
+regex = "(?:pub\\s+)?type\\s+{T}\\b"
+
+[[patterns]]
+role = "macro"
+priority = 90
+regex = "(?:macro_rules!|#[\\w]+)\\s*{T}"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:let|const|static)\\s+(?:mut\\s+)?{T}\\s*(?::|=|;)"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "use\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "impl"
+priority = 80
+regex = "impl\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "derive"
+priority = 70
+regex = "#\\[derive\\(.*\\b{T}\\b"
+
+[[patterns]]
+role = "type-ref"
+priority = 60
+regex = "(?:&|Box|Arc|Rc|Option|Result|Vec|HashMap|HashSet|RefCell|Mutex)<\\s*{T}\\b"
+
+[[patterns]]
+role = "lifetime"
+priority = 50
+regex = "'{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"
