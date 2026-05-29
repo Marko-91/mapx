@@ -92,7 +92,15 @@ pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<Ha
     if let Ok(exe) = std::env::current_exe() {
         if let Some(parent) = exe.parent() {
             candidates.push(parent.join("languages"));
+            // `cargo install` places the binary in ~/.cargo/bin, so check ~/.cargo/lib/mapx/languages too
+            if let Some(grandparent) = parent.parent() {
+                candidates.push(grandparent.join("lib").join("mapx").join("languages"));
+            }
         }
+    }
+    // Also check $HOME/.local/share/mapx/languages
+    if let Ok(home) = std::env::var("HOME") {
+        candidates.push(PathBuf::from(home).join(".local").join("share").join("mapx").join("languages"));
     }
 
     for dir in &candidates {
@@ -110,6 +118,9 @@ pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<Ha
                 }
             }
         }
+    }
+    if configs.is_empty() {
+        eprintln!("[mapx] warning: no language configs found. Use --lang-dir to point to a directory with *.toml files.");
     }
     Ok(configs)
 }
