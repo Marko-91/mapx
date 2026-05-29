@@ -10,12 +10,7 @@ Pipeline: smart grep + BM25 + graph BFS → ranked tags.
 cargo install --path .
 ```
 
-After install, copy the language configs so mapx can find them:
-
-```bash
-mkdir -p ~/.local/share/mapx/languages
-cp languages/*.toml ~/.local/share/mapx/languages/
-```
+No setup needed — language configs are embedded in the binary.
 
 ## Usage
 

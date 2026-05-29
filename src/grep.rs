@@ -4,6 +4,14 @@ use serde::Deserialize;
 use regex::Regex;
 use walkdir::WalkDir;
 
+/// Embedded language configs — no external files needed at runtime.
+const EMBEDDED_LANGS: &[(&str, &str)] = &[
+    ("js",    include_str!("../languages/js.toml")),
+    ("php",   include_str!("../languages/php.toml")),
+    ("python", include_str!("../languages/python.toml")),
+    ("rust",  include_str!("../languages/rust.toml")),
+];
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct LanguageConfig {
     pub extensions: Vec<String>,
@@ -79,7 +87,17 @@ fn compile_pattern(raw: &str, term: &str) -> Option<Regex> {
     Regex::new(&pattern).ok()
 }
 
-pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<HashMap<String, LanguageConfig>, String> {
+fn load_embedded() -> HashMap<String, LanguageConfig> {
+    let mut configs = HashMap::new();
+    for (name, content) in EMBEDDED_LANGS {
+        if let Ok(config) = toml::from_str::<LanguageConfig>(content) {
+            configs.insert(name.to_string(), config);
+        }
+    }
+    configs
+}
+
+fn load_external(root: &Path, lang_dir: Option<&Path>) -> HashMap<String, LanguageConfig> {
     let mut configs = HashMap::new();
     let mut candidates: Vec<PathBuf> = Vec::new();
     if let Some(ld) = lang_dir {
@@ -92,13 +110,8 @@ pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<Ha
     if let Ok(exe) = std::env::current_exe() {
         if let Some(parent) = exe.parent() {
             candidates.push(parent.join("languages"));
-            // `cargo install` places the binary in ~/.cargo/bin, so check ~/.cargo/lib/mapx/languages too
-            if let Some(grandparent) = parent.parent() {
-                candidates.push(grandparent.join("lib").join("mapx").join("languages"));
-            }
         }
     }
-    // Also check $HOME/.local/share/mapx/languages
     if let Ok(home) = std::env::var("HOME") {
         candidates.push(PathBuf::from(home).join(".local").join("share").join("mapx").join("languages"));
     }
@@ -119,8 +132,18 @@ pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<Ha
             }
         }
     }
+    configs
+}
+
+pub fn load_language_patterns(root: &Path, lang_dir: Option<&Path>) -> Result<HashMap<String, LanguageConfig>, String> {
+    let mut configs = load_embedded();
+    let external = load_external(root, lang_dir);
+    // External configs override embedded (allows users to extend/customize)
+    for (k, v) in external {
+        configs.insert(k, v);
+    }
     if configs.is_empty() {
-        eprintln!("[mapx] warning: no language configs found. Use --lang-dir to point to a directory with *.toml files.");
+        eprintln!("[mapx] warning: no language configs found.");
     }
     Ok(configs)
 }
