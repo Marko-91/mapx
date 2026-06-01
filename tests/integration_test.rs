@@ -109,7 +109,8 @@ fn test_mapx_empty_query() {
         .expect("failed to run mapx");
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert_eq!(stdout.trim(), "[]");
+    let val: serde_json::Value = serde_json::from_str(stdout.trim()).expect("invalid json");
+    assert_eq!(val["tags"], serde_json::json!([]));
 }
 
 #[test]
@@ -125,5 +126,6 @@ fn test_mapx_no_match() {
     // Should succeed with empty results
     assert!(output.status.success());
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert_eq!(stdout.trim(), "[]");
+    let val: serde_json::Value = serde_json::from_str(stdout.trim()).expect("invalid json");
+    assert_eq!(val["tags"], serde_json::json!([]));
 }

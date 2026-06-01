@@ -29,6 +29,10 @@ struct Args {
 
     #[arg(long)]
     lang_dir: Option<PathBuf>,
+
+    /// Include caller→callee call graph edges in output
+    #[arg(long)]
+    call_graph: bool,
 }
 
 fn main() {
@@ -43,17 +47,18 @@ fn main() {
         ollama_base: args.ollama_base,
         format: args.format,
         lang_dir: args.lang_dir,
+        call_graph: args.call_graph,
     };
 
-    let tags = output::with_spinner("Mapping code context", || run_pipeline(&config));
+    let result = output::with_spinner("Mapping code context", || run_pipeline(&config));
 
-    match tags {
-        Ok(tags) => {
+    match result {
+        Ok(result) => {
             let stdout = std::io::stdout();
             let mut handle = stdout.lock();
             match config.format.as_str() {
-                "lines" => output::write_lines(&tags, &mut handle).ok(),
-                _ => output::write_json(&tags, &mut handle).ok(),
+                "lines" => output::write_lines(&result.tags, &mut handle).ok(),
+                _ => output::write_json(&result, &mut handle).ok(),
             };
         }
         Err(e) => {

@@ -1,8 +1,8 @@
 use std::io::{self, Write};
-use crate::Tag;
+use crate::{Tag, PipelineResult};
 
-pub fn write_json(tags: &[Tag], writer: &mut impl Write) -> io::Result<()> {
-    let json = serde_json::to_string_pretty(tags).unwrap_or_else(|_| "[]".to_string());
+pub fn write_json(result: &PipelineResult, writer: &mut impl Write) -> io::Result<()> {
+    let json = serde_json::to_string_pretty(result).unwrap_or_else(|_| "{}".to_string());
     writeln!(writer, "{json}")
 }
 
@@ -80,13 +80,15 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::PipelineResult;
 
     #[test]
     fn test_write_json_empty() {
+        let result = PipelineResult { tags: vec![], call_graph: None };
         let mut buf = Vec::new();
-        write_json(&[], &mut buf).unwrap();
+        write_json(&result, &mut buf).unwrap();
         let output = String::from_utf8(buf).unwrap();
-        assert_eq!(output.trim(), "[]");
+        assert!(output.contains("\"tags\""));
     }
 
     #[test]
@@ -99,8 +101,9 @@ mod tests {
             kind: "def".to_string(),
             score: 1.0,
         }];
+        let result = PipelineResult { tags, call_graph: None };
         let mut buf = Vec::new();
-        write_json(&tags, &mut buf).unwrap();
+        write_json(&result, &mut buf).unwrap();
         let output = String::from_utf8(buf).unwrap();
         assert!(output.contains("src/main.rs"));
         assert!(output.contains("\"foo\""));

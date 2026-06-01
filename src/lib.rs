@@ -3,6 +3,7 @@ pub mod grep;
 pub mod bm25;
 pub mod graph;
 pub mod output;
+pub mod callgraph;
 
 #[cfg(feature = "ranker")]
 pub mod ranker;
@@ -37,6 +38,13 @@ impl PipelineMode {
     }
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct PipelineResult {
+    pub tags: Vec<Tag>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub call_graph: Option<Vec<callgraph::CallEdge>>,
+}
+
 #[derive(Debug, Clone)]
 pub struct Config {
     pub root: PathBuf,
@@ -47,6 +55,7 @@ pub struct Config {
     pub ollama_base: String,
     pub format: String,
     pub lang_dir: Option<PathBuf>,
+    pub call_graph: bool,
 }
 
 impl Default for Config {
@@ -60,31 +69,34 @@ impl Default for Config {
             ollama_base: "http://localhost:11434".to_string(),
             format: "json".to_string(),
             lang_dir: None,
+            call_graph: false,
         }
     }
 }
 
-pub fn run_pipeline(config: &Config) -> Result<Vec<Tag>, String> {
+pub fn run_pipeline(config: &Config) -> Result<PipelineResult, String> {
     let query = config.query.trim();
     if query.is_empty() {
-        return Ok(vec![]);
+        return Ok(PipelineResult { tags: vec![], call_graph: None });
     }
 
     // 1. Symbols
     let terms = symbols::extract_terms(query);
     if terms.is_empty() {
-        return Ok(vec![]);
+        return Ok(PipelineResult { tags: vec![], call_graph: None });
     }
 
     // 2. Grep
     let ext_patterns = grep::load_language_patterns(&config.root, config.lang_dir.as_deref())?;
     let grep_hits = grep::smart_grep(&config.root, &terms, &ext_patterns);
     if grep_hits.is_empty() {
-        return Ok(vec![]);
+        return Ok(PipelineResult { tags: vec![], call_graph: None });
     }
 
     if config.mode == PipelineMode::Grep {
-        return Ok(build_tags(&grep_hits, None, &config.root));
+        let tags = build_tags(&grep_hits, None, &config.root);
+        let cg = if config.call_graph { Some(callgraph::build_call_graph(&grep_hits)) } else { None };
+        return Ok(PipelineResult { tags, call_graph: cg });
     }
 
     // 3. BM25
@@ -94,21 +106,29 @@ pub fn run_pipeline(config: &Config) -> Result<Vec<Tag>, String> {
     let merged = merge_candidates(&grep_hits, &bm25_scores);
 
     if config.mode == PipelineMode::Bm25 || merged.is_empty() {
-        return Ok(build_tags_from_merged(&merged, &config.root));
+        let tags = build_tags_from_merged(&merged, &config.root);
+        let cg = if config.call_graph { Some(callgraph::build_call_graph(&grep_hits)) } else { None };
+        return Ok(PipelineResult { tags, call_graph: cg });
     }
 
     // 5. Graph BFS
     let tags = graph::build_graph_tags(&merged, &terms, &config.root);
 
-    // 6. Optional LLM rank
+    // 6. Call graph (optional)
+    let cg = if config.call_graph { Some(callgraph::build_call_graph(&grep_hits)) } else { None };
+
+    // 7. Optional LLM rank
     #[cfg(feature = "ranker")]
     if let Some(ref model) = config.rank_model {
         if !tags.is_empty() {
-            return Ok(ranker::llm_rank(&tags, model, &config.ollama_base));
+            let ranked = ranker::llm_rank(&tags, model, &config.ollama_base);
+            let ranked_filtered: Vec<Tag> = ranked.into_iter().filter(|t| t.score >= 1.0).collect();
+            return Ok(PipelineResult { tags: ranked_filtered, call_graph: cg });
         }
     }
 
-    Ok(tags)
+    let tags: Vec<Tag> = tags.into_iter().filter(|t| t.score >= 1.0).collect();
+    Ok(PipelineResult { tags, call_graph: cg })
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -128,8 +148,8 @@ impl MergedCandidate {
 }
 
 fn merge_candidates(grep_hits: &[grep::GrepHit], bm25_scores: &[bm25::Bm25Score]) -> Vec<MergedCandidate> {
-    let grep_top: std::collections::HashSet<&str> = grep_hits.iter().take(15).map(|g| g.file.as_str()).collect();
-    let bm25_top: std::collections::HashSet<&str> = bm25_scores.iter().take(15).map(|b| b.file.as_str()).collect();
+    let grep_top: std::collections::HashSet<&str> = grep_hits.iter().filter(|g| g.score > 0.0).map(|g| g.file.as_str()).collect();
+    let bm25_top: std::collections::HashSet<&str> = bm25_scores.iter().filter(|b| b.score > 0.0).map(|b| b.file.as_str()).collect();
     let union: std::collections::HashSet<&str> = grep_top.union(&bm25_top).copied().collect();
 
     let mut merged: Vec<MergedCandidate> = union.iter().map(|&fp| {

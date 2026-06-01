@@ -1,0 +1,21 @@
+extensions = [".md", ".mdx", ".markdown"]
+
+[[patterns]]
+role = "heading"
+priority = 90
+regex = "^#{1,6}\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "code-mention"
+priority = 80
+regex = "`{T}`"
+
+[[patterns]]
+role = "link"
+priority = 50
+regex = "\\[.*\\b{T}\\b.*\\]\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

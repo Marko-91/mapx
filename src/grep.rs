@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use serde::Deserialize;
-use regex::Regex;
+use regex::{Regex, RegexBuilder};
 use walkdir::WalkDir;
 
 /// Embedded language configs — no external files needed at runtime.
 const EMBEDDED_LANGS: &[(&str, &str)] = &[
     ("js",    include_str!("../languages/js.toml")),
+    ("md",    include_str!("../languages/md.toml")),
     ("php",   include_str!("../languages/php.toml")),
     ("python", include_str!("../languages/python.toml")),
     ("rust",  include_str!("../languages/rust.toml")),
@@ -84,7 +85,7 @@ fn role_multiplier(role: &str) -> f64 {
 fn compile_pattern(raw: &str, term: &str) -> Option<Regex> {
     let escaped = regex::escape(term);
     let pattern = raw.replace("{T}", &escaped);
-    Regex::new(&pattern).ok()
+    RegexBuilder::new(&pattern).case_insensitive(true).build().ok()
 }
 
 fn load_embedded() -> HashMap<String, LanguageConfig> {
@@ -158,17 +159,25 @@ pub fn smart_grep(root: &Path, terms: &[String], lang_configs: &HashMap<String, 
         if files.is_empty() { continue; }
 
         for filepath in &files {
+            // Skip minified/bundled files — they match on every symbol but are noise
+            if is_minified_filename(filepath) {
+                continue;
+            }
             let content = match std::fs::read_to_string(filepath) {
                 Ok(c) => c,
                 Err(_) => continue,
             };
             let lines: Vec<&str> = content.lines().collect();
+            // Skip files that are minified regardless of filename (single very long line)
+            if lines.len() == 1 && lines[0].len() > 500 {
+                continue;
+            }
             let mut file_matches = Vec::new();
 
             for term in terms {
                 for pat in &config.patterns {
                     let Some(re) = compile_pattern(&pat.regex, term) else { continue };
-                    for (i, line) in lines.iter().enumerate().take(2000) {
+                    for (i, line) in lines.iter().enumerate() {
                         if re.is_match(line) {
                             file_matches.push(MatchInfo {
                                 line: i + 1,
@@ -204,6 +213,18 @@ pub fn smart_grep(root: &Path, terms: &[String], lang_configs: &HashMap<String, 
 
     results.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
     results
+}
+
+fn is_minified_filename(path: &std::path::Path) -> bool {
+    let name = path.file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("");
+    let lower = name.to_lowercase();
+    lower.contains(".min.")
+        || lower.ends_with(".bundle.js")
+        || lower.ends_with(".chunk.js")
+        || lower.ends_with(".compiled.js")
+        || lower.ends_with(".prod.js")
 }
 
 fn find_files(root: &Path, extensions: &[String]) -> Vec<std::path::PathBuf> {
