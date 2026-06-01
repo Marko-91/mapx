@@ -1,0 +1,56 @@
+extensions = [".go"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "func\\s+(?:\\([^)]*\\)\\s+)?{T}\\s*\\("
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "type\\s+{T}\\s+struct\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "type\\s+{T}\\s+interface\\b"
+
+[[patterns]]
+role = "definition"
+priority = 90
+regex = "type\\s+{T}\\s+="
+
+[[patterns]]
+role = "definition"
+priority = 80
+regex = "type\\s+{T}\\s+\\w+"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:var|const)\\s+{T}\\b"
+
+[[patterns]]
+role = "variable"
+priority = 80
+regex = "{T}\\s*:=\\s*(?:\\w|\\(|\\[|\\{|&)"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "\"(?:[^\"]*/)?{T}\""
+
+[[patterns]]
+role = "import"
+priority = 80
+regex = "import\\s+.*\\b{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "\\.\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

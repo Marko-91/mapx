@@ -55,6 +55,24 @@ const LANG_PATTERNS: &[LangCallPattern] = &[
         call_re: r"(\w+)\s*\(",
         indent_based: true,
     },
+    LangCallPattern {
+        exts: &["go"],
+        def_re: r"func\s+(?:\(\w+\s+\*?\w+\)\s+)?(\w+)\s*\(",
+        call_re: r"(?:\w+\.)*(\w+)\s*\(",
+        indent_based: false,
+    },
+    LangCallPattern {
+        exts: &["java"],
+        def_re: r"(?:\w+\s+)*(?:void|\w+(?:\[\])?)\s+(\w+)\s*\(",
+        call_re: r"(?:\.(\w+)|(\w+))\s*\(",
+        indent_based: false,
+    },
+    LangCallPattern {
+        exts: &["c", "h", "cpp", "hpp", "cc", "cxx", "hxx", "c++", "h++"],
+        def_re: r"(?:\w+\s+)*(?:\*|\&)?\s*(\w+)\s*\(",
+        call_re: r"(\w+)\s*\(",
+        indent_based: false,
+    },
 ];
 
 /// Noise words to ignore as callee names (language keywords, common builtins)

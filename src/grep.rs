@@ -11,6 +11,9 @@ const EMBEDDED_LANGS: &[(&str, &str)] = &[
     ("php",   include_str!("../languages/php.toml")),
     ("python", include_str!("../languages/python.toml")),
     ("rust",  include_str!("../languages/rust.toml")),
+    ("go",    include_str!("../languages/go.toml")),
+    ("java",  include_str!("../languages/java.toml")),
+    ("c_cpp", include_str!("../languages/c_cpp.toml")),
 ];
 
 #[derive(Debug, Clone, Deserialize)]

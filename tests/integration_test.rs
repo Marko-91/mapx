@@ -45,6 +45,60 @@ fn test_mapx_grep_mode_js() {
 }
 
 #[test]
+fn test_mapx_grep_mode_go() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.go"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_java() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.java"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_c() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.c"), "stdout:\n{stdout}");
+}
+
+#[test]
 fn test_mapx_grep_mode_python() {
     let root = fixtures_dir();
     let output = Command::new(mapx_binary())

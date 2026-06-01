@@ -1,0 +1,61 @@
+extensions = [".c", ".h", ".cpp", ".hpp", ".cc", ".cxx", ".hxx", ".c++", ".h++"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:class|struct|enum|union)\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "typedef\\s+.*\\b{T}\\b\\s*;"
+
+[[patterns]]
+role = "definition"
+priority = 90
+regex = "\\}\\s*{T}\\s*;"
+
+[[patterns]]
+role = "definition"
+priority = 90
+regex = "using\\s+{T}\\s*="
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:\\w+\\s+)*(?:\\*|&)?\\s*{T}\\s*\\([^)]*\\)\\s*\\{"
+
+[[patterns]]
+role = "definition"
+priority = 80
+regex = "#define\\s+{T}\\b"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "#include\\s+[<\"].*{T}.*[>\"]"
+
+[[patterns]]
+role = "macro"
+priority = 80
+regex = "#\\s*(?:define|ifdef|ifndef|undef)\\s+{T}\\b"
+
+[[patterns]]
+role = "namespace"
+priority = 60
+regex = "namespace\\s+{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "(?:->|\\.)\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "type-ref"
+priority = 50
+regex = "(?:struct|class|enum|union)\\s+{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

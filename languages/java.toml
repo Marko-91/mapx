@@ -1,0 +1,66 @@
+extensions = [".java", ".class"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:public|private|protected|static|abstract|final|sealed)?\\s*(?:non-sealed)?\\s*class\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:public|private|protected|static|abstract)?\\s*interface\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:public|private|protected|static|final)?\\s*enum\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "@interface\\s+{T}\\b"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:\\w+\\s+)*(?:void|\\w+(?:<[^>]+>)?(?:\\[\\])?)\\s+{T}\\s*\\("
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:\\w+\\s+)*(?:\\w+(?:\\[\\])?)\\s+{T}\\s*(?:=|;)"
+
+[[patterns]]
+role = "variable"
+priority = 80
+regex = "(?:var|val)\\s+{T}\\s*="
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "import\\s+(?:static\\s+)?(?:\\w+\\.)*{T}\\b"
+
+[[patterns]]
+role = "instantiation"
+priority = 70
+regex = "new\\s+{T}[\\s(;]"
+
+[[patterns]]
+role = "extends"
+priority = 50
+regex = "(?:extends|implements)\\s+{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "\\.\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "decorator"
+priority = 40
+regex = "@{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"
