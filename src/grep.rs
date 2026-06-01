@@ -14,6 +14,13 @@ const EMBEDDED_LANGS: &[(&str, &str)] = &[
     ("go",    include_str!("../languages/go.toml")),
     ("java",  include_str!("../languages/java.toml")),
     ("c_cpp", include_str!("../languages/c_cpp.toml")),
+    ("bash",  include_str!("../languages/bash.toml")),
+    ("dockerfile", include_str!("../languages/dockerfile.toml")),
+    ("sql",   include_str!("../languages/sql.toml")),
+    ("ruby",  include_str!("../languages/ruby.toml")),
+    ("lua",   include_str!("../languages/lua.toml")),
+    ("csharp", include_str!("../languages/csharp.toml")),
+    ("kotlin", include_str!("../languages/kotlin.toml")),
 ];
 
 #[derive(Debug, Clone, Deserialize)]
@@ -251,6 +258,11 @@ fn find_files(root: &Path, extensions: &[String]) -> Vec<std::path::PathBuf> {
             if entry.file_type().is_file() {
                 if let Some(ext) = entry.path().extension().and_then(|e| e.to_str()) {
                     if ext_set.contains(&ext.to_lowercase()) {
+                        files.push(entry.path().to_path_buf());
+                    }
+                } else if let Some(fname) = entry.path().file_name().and_then(|n| n.to_str()) {
+                    // Match extensionless files like Dockerfile by their full filename
+                    if ext_set.contains(&fname.to_lowercase()) {
                         files.push(entry.path().to_path_buf());
                     }
                 }

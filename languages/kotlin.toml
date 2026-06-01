@@ -1,0 +1,51 @@
+extensions = [".kt", ".kts"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:data\\s+|sealed\\s+|open\\s+|abstract\\s+)?class\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:sealed\\s+|open\\s+|abstract\\s+)?interface\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:data\\s+)?object\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:enum\\s+)?class\\s+{T}\\b"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:\\w+\\s+)*fun\\s+(?:\\w+\\.\\s*)?{T}\\s*\\([^)]*\\)\\s*.*\\{"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:val|var)\\s+{T}\\s*(?::|\\s*=)"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "import\\s+(?:\\w+\\.)*{T}\\b"
+
+[[patterns]]
+role = "namespace"
+priority = 60
+regex = "package\\s+(?:\\w+\\.)*{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "\\.\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

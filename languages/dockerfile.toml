@@ -1,0 +1,16 @@
+extensions = ["Dockerfile", ".dockerfile"]
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "FROM\\s+.*{T}"
+
+[[patterns]]
+role = "variable"
+priority = 80
+regex = "(?:ENV|ARG)\\s+{T}\\b"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

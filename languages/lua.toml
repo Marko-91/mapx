@@ -1,0 +1,31 @@
+extensions = [".lua"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:local\\s+)?function\\s+(?:\\w+(?:\\.|:)\\s*)?{T}\\s*\\("
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:local\\s+)?{T}\\s*=\\s*(?:function\\s*\\()"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "require\\s+['\"]{T}['\"]"
+
+[[patterns]]
+role = "import"
+priority = 80
+regex = "require\\s+['\"].*{T}"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "(?:\\.|:)\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

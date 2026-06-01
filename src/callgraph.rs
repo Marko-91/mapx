@@ -73,6 +73,48 @@ const LANG_PATTERNS: &[LangCallPattern] = &[
         call_re: r"(\w+)\s*\(",
         indent_based: false,
     },
+    // Bash — function keyword or name() — noisy, best-effort
+    LangCallPattern {
+        exts: &["sh", "bash", "zsh", "ksh"],
+        def_re: r"(?:function\s+(\w+)|(\w+)\s*\(\s*\))",
+        call_re: r"(?:\$\(\s*)?(\w+)\s*\(",
+        indent_based: false,
+    },
+    // SQL — stored procedures, functions, views
+    LangCallPattern {
+        exts: &["sql", "psql"],
+        def_re: r"CREATE\s+(?:OR\s+REPLACE\s+)?(?:FUNCTION|PROCEDURE|VIEW)\s+(?:\w+\.)?(\w+)\b",
+        call_re: r"(\w+)\s*\(",
+        indent_based: false,
+    },
+    // Ruby
+    LangCallPattern {
+        exts: &["rb", "erb", "rake"],
+        def_re: r"def\s+(\w+)",
+        call_re: r"(?:self\.|\.)?(\w+)\s*\(",
+        indent_based: false,
+    },
+    // Lua — function, local function, table.method, table:method
+    LangCallPattern {
+        exts: &["lua"],
+        def_re: r"(?:local\s+)?function\s+(?:\w+(?:\.|:)\s*)?(\w+)\s*\(",
+        call_re: r"(?:\w+(?:\.|:))*(\w+)\s*\(",
+        indent_based: false,
+    },
+    // C#
+    LangCallPattern {
+        exts: &["cs"],
+        def_re: r"(?:public|private|protected|internal|static|virtual|override|abstract|sealed|async|unsafe|new|partial|extern|implicit|explicit|operator)?(?:\s+\w+(?:<[^>]*>)?(?:\s+|\?|\[\s*\]\s*))+(\w+)\s*\([^)]*\)",
+        call_re: r"(?:\w+\.)*(\w+)\s*\(",
+        indent_based: false,
+    },
+    // Kotlin
+    LangCallPattern {
+        exts: &["kt", "kts"],
+        def_re: r"fun\s+(?:\w+\.\s*)?(\w+)\s*\(",
+        call_re: r"(?:\w+\.)*(\w+)\s*\(",
+        indent_based: false,
+    },
 ];
 
 /// Noise words to ignore as callee names (language keywords, common builtins)
@@ -81,6 +123,27 @@ const CALL_NOISE: &[&str] = &[
     "println", "print", "echo", "require", "include", "isset", "empty",
     "array", "list", "die", "exit", "throw", "new", "assert",
     "len", "str", "int", "bool", "vec", "map", "set",
+    // Bash
+    "printf", "read", "test", "local", "export", "unset", "source", "eval",
+    "trap", "exec", "shopt",
+    // SQL
+    "select", "from", "where", "and", "or", "not", "null", "is", "as",
+    "on", "join", "left", "right", "inner", "outer", "full", "cross",
+    "group", "by", "having", "order", "asc", "desc", "limit", "offset",
+    "insert", "into", "values", "update", "delete", "alter", "drop",
+    "table", "index", "view", "trigger", "begin", "commit", "rollback",
+    "declare", "then", "else", "elsif", "end",
+    // Ruby
+    "puts", "raise", "attr_reader", "attr_writer", "attr_accessor",
+    "private", "public", "protected", "module_function", "alias_method",
+    // Lua
+    "ipairs", "pairs", "type", "tostring", "tonumber",
+    "setmetatable", "getmetatable",
+    // C#
+    "typeof", "nameof", "sizeof", "default", "var", "using", "value",
+    "foreach", "in", "async", "await",
+    // Kotlin
+    "println", "check", "TODO", "with", "apply", "let", "run", "also", "repeat",
 ];
 
 fn ext_of(file: &str) -> &str {

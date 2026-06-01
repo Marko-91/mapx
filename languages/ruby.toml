@@ -1,0 +1,46 @@
+extensions = [".rb", ".erb", ".rake"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:public|private|protected)?\\s*def\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "class\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "module\\s+{T}\\b"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:attr_reader|attr_writer|attr_accessor)\\s+:?{T}\\b"
+
+[[patterns]]
+role = "variable"
+priority = 80
+regex = "@{T}\\b"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "require\\s+['\"].*{T}.*['\"]"
+
+[[patterns]]
+role = "import"
+priority = 80
+regex = "(?:include|extend|prepend)\\s+{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "\\.\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

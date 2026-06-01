@@ -1,0 +1,21 @@
+extensions = [".sh", ".bash", ".zsh", ".ksh"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:function\\s+)?{T}\\s*(?:\\(\\s*\\)\\s*(?:\\{|)|\\{)"
+
+[[patterns]]
+role = "variable"
+priority = 90
+regex = "(?:(?:export|local|readonly)\\s+)?{T}\\s*="
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "(?:source|\\.)\\s+.*{T}"
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

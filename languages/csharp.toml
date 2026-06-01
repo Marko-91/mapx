@@ -1,0 +1,41 @@
+extensions = [".cs"]
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:public|private|protected|internal|static|sealed|abstract|partial|readonly)?\\s*(?:class|struct|record)\\s+{T}\\b"
+
+[[patterns]]
+role = "interface"
+priority = 100
+regex = "(?:public|private|protected|internal)?\\s*interface\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "(?:public|private|protected|internal)?\\s*enum\\s+{T}\\b"
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "(?:public|private|protected|internal|static|virtual|override|abstract|sealed|async|unsafe|new|partial|extern|implicit|explicit|operator)?(?:\\s+\\w+(?:<[^>]*>)?(?:\\s+|\\?|\\[\\s*\\]\\s*))+{T}\\s*\\([^)]*\\)\\s*(?:\\{|\\s*\\{|\\s*$)"
+
+[[patterns]]
+role = "namespace"
+priority = 70
+regex = "namespace\\s+{T}\\b"
+
+[[patterns]]
+role = "import"
+priority = 90
+regex = "using\\s+(?:static\\s+)?(?:\\w+\\.)*{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "\\.\\s*{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"

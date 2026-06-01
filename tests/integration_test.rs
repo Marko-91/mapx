@@ -152,6 +152,132 @@ fn test_mapx_lines_format() {
 }
 
 #[test]
+fn test_mapx_grep_mode_ruby() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.rb"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_bash() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.sh"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_sql() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.sql"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_lua() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.lua"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_csharp() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.cs"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_kotlin() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.kt"), "stdout:\n{stdout}");
+}
+
+#[test]
+fn test_mapx_grep_mode_dockerfile() {
+    let root = fixtures_dir();
+    let output = Command::new(mapx_binary())
+        .arg("--root")
+        .arg(root)
+        .arg("--query")
+        .arg("buildMiniGraph")
+        .arg("--mode")
+        .arg("grep")
+        .output()
+        .expect("failed to run mapx");
+    assert!(output.status.success(), "stderr: {}", String::from_utf8_lossy(&output.stderr));
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("buildMiniGraph"), "stdout:\n{stdout}");
+    assert!(stdout.contains("sample.dockerfile"), "stdout:\n{stdout}");
+}
+
+#[test]
 fn test_mapx_empty_query() {
     let root = fixtures_dir();
     let output = Command::new(mapx_binary())

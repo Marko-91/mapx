@@ -1,0 +1,31 @@
+extensions = [".sql", ".psql"]
+
+[[patterns]]
+role = "function-def"
+priority = 100
+regex = "CREATE\\s+(?:OR\\s+REPLACE\\s+)?(?:FUNCTION|PROCEDURE)\\s+{T}\\b"
+
+[[patterns]]
+role = "definition"
+priority = 100
+regex = "CREATE\\s+(?:OR\\s+REPLACE\\s+)?(?:TABLE|VIEW|INDEX|TRIGGER|SEQUENCE)\\s+(?:\\w+\\.)?{T}\\b"
+
+[[patterns]]
+role = "variable"
+priority = 80
+regex = "DECLARE\\s+{T}\\b"
+
+[[patterns]]
+role = "import"
+priority = 70
+regex = "REFERENCES\\s+{T}\\b"
+
+[[patterns]]
+role = "method-call"
+priority = 60
+regex = "{T}\\s*\\("
+
+[[patterns]]
+role = "mention"
+priority = 1
+regex = "\\b{T}\\b"
