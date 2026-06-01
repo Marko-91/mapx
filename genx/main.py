@@ -251,6 +251,28 @@ def extract_symbols_from_query(query: str) -> list[str]:
 # History management
 # ---------------------------------------------------------------------------
 
+_DEDUP_PATTERN = re.compile(
+    r'> (.+) \| score: (\d+) \| symbols: (.+)'
+)
+
+def parse_history_dedup_keys(history: str) -> set[tuple[str, str, str, int]]:
+    """Parse existing history and return dedup keys (file, symbol, role, score)."""
+    keys: set[tuple[str, str, str, int]] = set()
+    current_file = ""
+    for line in history.split('\n'):
+        if line.startswith('### '):
+            current_file = line[4:].strip()
+        elif line.startswith('> ') and current_file:
+            m = _DEDUP_PATTERN.match(line)
+            if m:
+                roles_str = m.group(1)
+                score = int(m.group(2))
+                symbols_str = m.group(3)
+                for role in roles_str.split(', '):
+                    for symbol in symbols_str.split(', '):
+                        keys.add((current_file, symbol.strip(), role.strip(), score))
+    return keys
+
 def estimate_tokens(text: str) -> int:
     return len(text) // TOKEN_ESTIMATE_CHARS
 
@@ -389,9 +411,36 @@ def cmd_ctx(args: argparse.Namespace) -> None:
                 save_history(history_path, history)
                 print("[genx] history compressed and rewritten", file=sys.stderr)
 
-    # 5. Append new entry to history file
-    append_history(history_path, history_entry)
-    print(f"[genx] appended to {history_path}", file=sys.stderr)
+    # 5. Dedup tags against history — skip entries already in the file
+    if history:
+        existing_keys = parse_history_dedup_keys(history)
+        new_tags = [
+            t for t in tags
+            if (t["rel_fname"], t["name"], t.get("kind", ""), int(t.get("score", 0)))
+               not in existing_keys
+        ]
+    else:
+        new_tags = tags
+
+    if new_tags and len(new_tags) < len(tags):
+        # Some tags filtered — reassemble with only new entries for the history file
+        new_context_section = assemble_context(new_tags, call_graph, query, task, root)
+        new_hit_files = ", ".join(sorted(set(t["rel_fname"] for t in new_tags[:10])))
+        history_entry = (
+            f"\n---\n"
+            f"## [{timestamp}] {symbol_str}\n"
+            f"**Task**: {task}\n"
+            f"**Root**: {root}\n"
+            f"**Files hit**: {new_hit_files}\n\n"
+            f"{new_context_section}\n"
+        )
+        append_history(history_path, history_entry)
+        print(f"[genx] appended {len(new_tags)} new tag(s) to {history_path} ({len(tags)} total)", file=sys.stderr)
+    elif new_tags:
+        append_history(history_path, history_entry)
+        print(f"[genx] appended to {history_path}", file=sys.stderr)
+    else:
+        print(f"[genx] all {len(tags)} tags already in history — skipped append", file=sys.stderr)
 
     # 6. Decide what to send to stdout
     prior_symbols_found = bool(filter_history_by_symbols(history, symbols).strip()) if history else False
